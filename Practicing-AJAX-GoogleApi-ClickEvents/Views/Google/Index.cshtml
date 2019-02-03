@@ -1,6 +1,6 @@
 ﻿
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "GMaps-Api";
 }
 
 @section myStyles{
@@ -42,6 +42,24 @@
     </div>
 </div>
 <br />
+<button id="saveToDb" class="btn btn-info center-block" type="button">Save Coordinates To Database</button>
+<hr />
+<table class="table table-bordered table-striped table-hover table-condensed" id="cordsTable">
+    <thead>
+        <tr>
+            <th>
+                Latitude
+            </th>
+            <th>
+                Longitude
+            </th>
+            <th>
+                Actions
+            </th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
 
 @section myScript{
     <script type="text/javascript">
@@ -143,6 +161,38 @@
         document.getElementById("default").addEventListener("click", () => {
             map.panTo(latlng);
         });
+
+        // Getting Data From Database
+        function GetData() {
+            var html = '';
+            $.ajax({
+                url: "/Google/GetAllCords/",
+                type: "GET",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (result) {
+                    if (result.length !== 0) {
+                        $.each(result,
+                            function (key, item) {
+                                html += " <tr id=" + item.Id + "><td>" +
+                                    item.Latitude +
+                                    "</td><td>" +
+                                    item.Longitude +
+                                    "</td><td> <a id='delete' href='#' onclick='DeleteCords(" + item.Id + ")'>Delete</a>" +
+                                    " | <a id='edit' href='#' onClick='LoadOnMap(this)'>Load</a> </td></tr>";
+                            });
+                        $("#cordsTable > tbody").html(html);
+                    } else {
+                        html += "<tr><td><td><td>No Data Found</td></td></td></tr>";
+                        $("#cordsTable > tbody").html(html);
+                    }
+                },
+                error: function (errormessage) {
+                    alert("Something Went Wrong on Data Load");
+                    console.log(errormessage.responseText);
+                }
+            });
+        }
 
     </script>
 
