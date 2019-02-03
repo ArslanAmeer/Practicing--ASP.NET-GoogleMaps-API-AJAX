@@ -42,5 +42,20 @@ namespace Practicing_AJAX_GoogleApi_ClickEvents.Controllers
 
             return "DONE";
         }
+
+        public string DeleteCords(int id)
+        {
+            using (db)
+            {
+                GoogleMapCord cords = db.GoogleMapCords.Find(id);
+                if (cords != null)
+                {
+                    db.GoogleMapCords.Remove(cords);
+                    db.SaveChanges();
+                    return "Successfully Deleted Cords";
+                }
+            }
+            return "NO Data Found";
+        }
     }
 }

@@ -20,6 +20,10 @@
             left: 2.2%;
             z-index: 9999999;
         }
+
+        a {
+            cursor: pointer;
+        }
     </style>
 }
 
@@ -178,8 +182,8 @@
                                     item.Latitude +
                                     "</td><td>" +
                                     item.Longitude +
-                                    "</td><td> <a id='delete' href='#' onclick='DeleteCords(" + item.Id + ")'>Delete</a>" +
-                                    " | <a id='edit' href='#' onClick='LoadOnMap(this)'>Load</a> </td></tr>";
+                                    "</td><td> <a id='delete' onclick='DeleteCords(" + item.Id + ")'>Delete</a>" +
+                                    " | <a id='edit' onClick='LoadOnMap(this)'>Load</a> </td></tr>";
                             });
                         $("#cordsTable > tbody").html(html);
                     } else {
@@ -210,6 +214,21 @@
                 }
             });
         });
+
+        //Deleting Data/Cords from Database
+        function DeleteCords(id) {
+            if (confirm("Are You Sure You Want To These Coordinates?")) {
+                $.ajax({
+                    url: "/Google/DeleteCords/" + id,
+                    type: "POST",
+                    success: (response) => {
+                        console.log(response);
+                        GetData();
+                    }
+                });
+            }
+
+        }
 
     </script>
 
