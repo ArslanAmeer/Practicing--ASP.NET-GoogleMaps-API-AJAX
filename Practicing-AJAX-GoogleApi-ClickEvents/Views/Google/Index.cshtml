@@ -3,5 +3,151 @@
     ViewBag.Title = "Index";
 }
 
-<h2 class="text-center">Google maps API - Click Events</h2>
+@section myStyles{
+    <style>
+        #gMap {
+            height: 300px;
+            margin: auto;
+        }
 
+        th, td {
+            text-align: center;
+        }
+
+        #default {
+            position: absolute;
+            top: 20%;
+            left: 2.2%;
+            z-index: 9999999;
+        }
+    </style>
+}
+
+<h2 class="text-center text-uppercase text-primary">Google maps API - Click Events</h2>
+
+<div class="container" style="position: relative">
+    <div id="gMap"></div>
+    <button class="btn btn-warning btn-sm" id="default">Default Location</button>
+</div>
+
+<br />
+<div class="row form-inline text-center">
+    <div class="input-group">
+        <span class="input-group-addon">Latitude</span>
+        <input id="lat" type="text" class="form-control" placeholder="lat-cord" readonly="readonly">
+    </div>
+    <div class="input-group">
+        <span class="input-group-addon">Longitude</span>
+        <input id="lng" type="text" class="form-control" placeholder="lng-cord" readonly="readonly">
+    </div>
+</div>
+<br />
+
+@section myScript{
+    <script type="text/javascript">
+
+        var map;
+        var marker;
+        var markers = [];
+        var mapDiv = document.getElementById("gMap");
+        var latlng = { lat: 31.511645, lng: 74.311594 };
+
+        $("#default").hide();
+
+
+        function initMap() {
+
+            map = new google.maps.Map(mapDiv,
+                {
+                    zoom: 17,
+                    center: latlng,
+                    disableDoubleClickZoom: true,
+                    clickableIcons: false
+                });
+
+            var marker = new google.maps.Marker({
+                map: map,
+                animation: google.maps.Animation.DROP,
+                title: "Default Center Point",
+                position: latlng,
+                icon: {
+                    url: "http://maps.google.com/mapfiles/kml/shapes/schools.png"
+                }
+            });
+
+            var infowindow = new google.maps.InfoWindow({
+                content: "Vision Plus Is Default Location"
+            });
+
+            marker.addListener("click", function (event) {
+                infowindow.open(map, marker);
+                document.getElementById("lat").value = event.latLng.lat();
+                document.getElementById("lng").value = event.latLng.lng();
+            });
+
+            map.addListener("dblclick", (event) => {
+                deleteMarkers();
+                addMarker(event.latLng);
+                map.panTo(event.latLng);
+                var latitude = event.latLng.lat();
+                var longitude = event.latLng.lng();
+                document.getElementById("lat").value = latitude;
+                document.getElementById("lng").value = longitude;
+                console.log(latitude + ', ' + longitude);
+                $("#default").fadeIn();
+            });
+        }
+
+        GetData();
+
+        // Adds a marker to the map and push to the array.
+        function addMarker(location) {
+
+            marker = new google.maps.Marker({
+                position: location,
+                icon: {
+                    url: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png"
+                },
+                animation: google.maps.Animation.DROP,
+                map: map
+            });
+            marker.addListener("click", () => {
+                toggleBounce(marker);
+            });
+
+            markers.push(marker);
+
+        }
+
+        // Sets the map on all markers in the array.
+        function setMapOnAll(map) {
+            for (var i = 0; i < markers.length; i++) {
+                markers[i].setMap(map);
+            }
+        }
+
+        // Deletes all markers in the array by removing references to them.
+        function deleteMarkers() {
+            setMapOnAll(null);
+            markers = [];
+        }
+
+        function toggleBounce(marker) {
+            if (marker.getAnimation() !== null) {
+                marker.setAnimation(null);
+            } else {
+                marker.setAnimation(google.maps.Animation.BOUNCE);
+            }
+        }
+
+        document.getElementById("default").addEventListener("click", () => {
+            map.panTo(latlng);
+        });
+
+    </script>
+
+    <script async defer
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCuDiaL_38l07wVjMbGOxsuk4hQQ3kknGE&callback=initMap">
+    </script>
+
+}
