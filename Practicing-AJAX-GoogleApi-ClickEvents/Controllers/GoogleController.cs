@@ -27,5 +27,20 @@ namespace Practicing_AJAX_GoogleApi_ClickEvents.Controllers
             return Json(cords, JsonRequestBehavior.AllowGet);
         }
 
+        [HttpPost]
+        public string AddCordsToDb(GoogleMapCord cords)
+        {
+            using (db)
+            {
+                db.GoogleMapCords.Add(new GoogleMapCord()
+                {
+                    Latitude = cords.Latitude,
+                    Longitude = cords.Longitude
+                });
+                db.SaveChanges();
+            }
+
+            return "DONE";
+        }
     }
 }

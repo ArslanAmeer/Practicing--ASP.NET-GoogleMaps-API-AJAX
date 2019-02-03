@@ -194,6 +194,23 @@
             });
         }
 
+        // Adding Data/Cords to Database
+        document.getElementById("saveToDb").addEventListener('click', () => {
+            var lat = document.getElementById("lat").value;
+            var lng = document.getElementById("lng").value;
+            var cords = new Object();
+            cords.Latitude = lat;
+            cords.Longitude = lng;
+            $.ajax({
+                url: "/Google/AddCordsToDb/",
+                type: "POST",
+                data: cords,
+                success: (data) => {
+                    GetData();
+                }
+            });
+        });
+
     </script>
 
     <script async defer
