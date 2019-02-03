@@ -18,7 +18,7 @@
             position: absolute;
             top: 20%;
             left: 2.2%;
-            z-index: 9999999;
+            z-index: 9;
         }
 
         a {
@@ -228,6 +228,20 @@
                 });
             }
 
+        }
+
+        //Loading Coordinates from Database to Map
+        function LoadOnMap(data) {
+            var lati = $(data).closest('tr').find('td:eq(0)').text();
+            var longi = $(data).closest('tr').find('td:eq(1)').text();
+            var id = $(data).closest('tr').attr('id');
+            document.getElementById("lat").value = lati;
+            document.getElementById("lng").value = longi;
+            var latlng = { lat: Number(lati), lng: Number(longi) };
+            deleteMarkers();
+            addMarker(latlng);
+            map.panTo(latlng);
+            $("#default").fadeIn();
         }
 
     </script>
